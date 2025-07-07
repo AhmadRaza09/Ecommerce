@@ -42,9 +42,9 @@ public class AdminServiceImpl implements AdminService {
 
         }
         boolean isActive = TransactionSynchronizationManager.isActualTransactionActive();
-        System.out.println("Is transaction active: " + isActive);
         Admin admin = adminMapper.toAdmin(adminDto);
         admin.setRoles(Arrays.asList(roleRepository.findByName("ADMIN")));
+
         return adminRepository.save(admin);
     }
 }
