@@ -36,15 +36,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public Admin save(AdminDto adminDto) {
-        try {
-            Thread.sleep(3000);
-        } catch (Exception e) {
-
-        }
-        boolean isActive = TransactionSynchronizationManager.isActualTransactionActive();
         Admin admin = adminMapper.toAdmin(adminDto);
         admin.setRoles(Arrays.asList(roleRepository.findByName("ADMIN")));
-
         return adminRepository.save(admin);
     }
 }
