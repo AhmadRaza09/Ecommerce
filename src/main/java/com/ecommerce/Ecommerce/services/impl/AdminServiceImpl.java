@@ -7,23 +7,23 @@ import com.ecommerce.Ecommerce.models.Admin;
 import com.ecommerce.Ecommerce.repositories.AdminRepository;
 import com.ecommerce.Ecommerce.repositories.RoleRepository;
 import com.ecommerce.Ecommerce.services.AdminService;
+import com.ecommerce.Ecommerce.services.RoleService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Arrays;
 
 @Service
+@Slf4j
 public class AdminServiceImpl implements AdminService {
+    private final RoleService roleService;
     private final AdminRepository adminRepository;
-
-    private final RoleRepository roleRepository;
-
     private final AdminMapper adminMapper;
 
-    public AdminServiceImpl(AdminRepository adminRepository, RoleRepository roleRepository, AdminMapper adminMapper) {
+    public AdminServiceImpl(RoleService roleService, AdminRepository adminRepository, AdminMapper adminMapper) {
+        this.roleService = roleService;
         this.adminRepository = adminRepository;
-        this.roleRepository = roleRepository;
         this.adminMapper = adminMapper;
     }
 
@@ -36,8 +36,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public Admin save(AdminDto adminDto) {
+        log.debug("Request to save Admin : {}", adminDto);
         Admin admin = adminMapper.toAdmin(adminDto);
-        admin.setRoles(Arrays.asList(roleRepository.findByName("ADMIN")));
+        admin.setRoles(Arrays.asList(roleService.findByName("ADMIN")));
         return adminRepository.save(admin);
     }
 }
