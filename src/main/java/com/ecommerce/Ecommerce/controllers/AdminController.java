@@ -1,8 +1,11 @@
 package com.ecommerce.Ecommerce.controllers;
 
 import com.ecommerce.Ecommerce.Dtos.AdminDto;
+import com.ecommerce.Ecommerce.models.Admin;
+import com.ecommerce.Ecommerce.response.ApiResponse;
 import com.ecommerce.Ecommerce.services.AdminService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +23,8 @@ public class AdminController {
 
     @PostMapping("/register-new")
     private ResponseEntity<?> addNewAdmin(@Valid @RequestBody AdminDto adminDto) {
-        return ResponseEntity.ok().body(adminService.save(adminDto));
+        Admin admin = adminService.save(adminDto);
+        ApiResponse<Admin> response = ApiResponse.generateResponse(HttpStatus.CREATED.value(), "Admin created Successfully", admin, null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

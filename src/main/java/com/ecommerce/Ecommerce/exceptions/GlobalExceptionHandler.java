@@ -1,5 +1,6 @@
 package com.ecommerce.Ecommerce.exceptions;
 
+import com.ecommerce.Ecommerce.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,8 @@ public class GlobalExceptionHandler {
         }
 
         log.error("MethodArgumentNotValidException: exception {} ", methodArgumentNotValidException);
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), methodArgumentNotValidException.getMessage(), errors);
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.BAD_REQUEST);
+        ApiResponse<Object> apiResponse = ApiResponse.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), methodArgumentNotValidException.getMessage(), null, errors);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -38,18 +39,17 @@ public class GlobalExceptionHandler {
         }
 
         log.error("ConstraintViolationException:  exception {} " + constraintViolationException);
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST.value(), constraintViolationException.getMessage(), errors);
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.BAD_REQUEST);
+        ApiResponse<Object> apiResponse = ApiResponse.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), constraintViolationException.getMessage(), null, errors);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception exception) {
         Map<String, String> errors = new HashMap<>();
         errors.put("exception", exception.getMessage());
+
         log.error("Exception:  exception {} ", exception);
-
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), errors);
-
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiResponse<Object> apiResponse = ApiResponse.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), null, errors);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
